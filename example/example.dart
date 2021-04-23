@@ -3,6 +3,7 @@ import 'package:avahi/avahi.dart';
 void main() async {
   var client = AvahiClient();
   await client.connect();
-  print('Running Avahi ${await client.getVersionString()}');
+  print('Server version: ${await client.getVersionString()}');
+  print('Hostname: ${await client.getHostName()}');
   await client.close();
 }

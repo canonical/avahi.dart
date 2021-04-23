@@ -32,6 +32,25 @@ class AvahiClient {
     return (result.returnValues[0] as DBusString).value;
   }
 
+  /// Gets the hostname.
+  Future<String> getHostName() async {
+    var result = await _root
+        .callMethod('org.freedesktop.Avahi.Server2', 'GetHostName', []);
+    if (result.signature != DBusSignature('s')) {
+      throw 'org.freedesktop.Avahi.Server2.GetHostName returned invalid result: ${result.returnValues}';
+    }
+    return (result.returnValues[0] as DBusString).value;
+  }
+
+  /// Sets the hostname.
+  Future<void> setHostName(String hostName) async {
+    var result = await _root.callMethod(
+        'org.freedesktop.Avahi.Server2', 'SetHostName', [DBusString(hostName)]);
+    if (result.signature != DBusSignature('')) {
+      throw 'org.freedesktop.Avahi.Server2.SetHostName returned invalid result: ${result.returnValues}';
+    }
+  }
+
   /// Terminates the connection to the Avahi daemon. If a client remains unclosed, the Dart process may not terminate.
   Future<void> close() async {
     if (_closeBus) {

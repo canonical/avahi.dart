@@ -16,8 +16,13 @@ class MockAvahiRoot extends DBusObject {
     }
 
     switch (methodCall.name) {
+      case 'GetHostName':
+        return DBusMethodSuccessResponse([DBusString(server.hostName)]);
       case 'GetVersionString':
         return DBusMethodSuccessResponse([DBusString(server.versionString)]);
+      case 'SetHostName':
+        server.hostName = (methodCall.values[0] as DBusString).value;
+        return DBusMethodSuccessResponse();
       default:
         return DBusMethodErrorResponse.unknownMethod();
     }
@@ -27,9 +32,11 @@ class MockAvahiRoot extends DBusObject {
 class MockAvahiServer extends DBusClient {
   late final MockAvahiRoot _root;
 
+  String hostName;
   final String versionString;
 
-  MockAvahiServer(DBusAddress clientAddress, {this.versionString = ''})
+  MockAvahiServer(DBusAddress clientAddress,
+      {this.hostName = '', this.versionString = ''})
       : super(clientAddress);
 
   Future<void> start() async {
@@ -52,6 +59,39 @@ void main() {
     await client.connect();
 
     expect(await client.getVersionString(), equals('1.2.3'));
+
+    await client.close();
+  });
+
+  test('get hostname', () async {
+    var server = DBusServer();
+    var clientAddress =
+        await server.listenAddress(DBusAddress.unix(dir: Directory.systemTemp));
+
+    var avahi = MockAvahiServer(clientAddress, hostName: 'foo');
+    await avahi.start();
+
+    var client = AvahiClient(bus: DBusClient(clientAddress));
+    await client.connect();
+
+    expect(await client.getHostName(), equals('foo'));
+
+    await client.close();
+  });
+
+  test('set hostname', () async {
+    var server = DBusServer();
+    var clientAddress =
+        await server.listenAddress(DBusAddress.unix(dir: Directory.systemTemp));
+
+    var avahi = MockAvahiServer(clientAddress, hostName: 'foo');
+    await avahi.start();
+
+    var client = AvahiClient(bus: DBusClient(clientAddress));
+    await client.connect();
+
+    await client.setHostName('bar');
+    expect(avahi.hostName, equals('bar'));
 
     await client.close();
   });
