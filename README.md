@@ -7,7 +7,7 @@ import 'package:avahi/avahi.dart';
 
 var client = avahiClient();
 await client.connect();
-print('Running avahi ${await client.getVersionString()}');
+print('Server version: ${await client.getVersionString()}');
 await client.close();
 ```
 
