@@ -32,6 +32,16 @@ class AvahiClient {
     return (result.returnValues[0] as DBusString).value;
   }
 
+  /// Gets the API version.
+  Future<int> getAPIVersion() async {
+    var result = await _root
+        .callMethod('org.freedesktop.Avahi.Server2', 'GetAPIVersion', []);
+    if (result.signature != DBusSignature('u')) {
+      throw 'org.freedesktop.Avahi.Server2.GetAPIVersion returned invalid result: ${result.returnValues}';
+    }
+    return (result.returnValues[0] as DBusUint32).value;
+  }
+
   /// Gets the hostname.
   Future<String> getHostName() async {
     var result = await _root
@@ -49,6 +59,46 @@ class AvahiClient {
     if (result.signature != DBusSignature('')) {
       throw 'org.freedesktop.Avahi.Server2.SetHostName returned invalid result: ${result.returnValues}';
     }
+  }
+
+  /// Gets the domain name.
+  Future<String> getDomainName() async {
+    var result = await _root
+        .callMethod('org.freedesktop.Avahi.Server2', 'GetDomainName', []);
+    if (result.signature != DBusSignature('s')) {
+      throw 'org.freedesktop.Avahi.Server2.GetDomainName returned invalid result: ${result.returnValues}';
+    }
+    return (result.returnValues[0] as DBusString).value;
+  }
+
+  /// Gets the hostname in fully qualified domain name form.
+  Future<String> getHostNameFqdn() async {
+    var result = await _root
+        .callMethod('org.freedesktop.Avahi.Server2', 'GetHostNameFqdn', []);
+    if (result.signature != DBusSignature('s')) {
+      throw 'org.freedesktop.Avahi.Server2.GetHostNameFqdn returned invalid result: ${result.returnValues}';
+    }
+    return (result.returnValues[0] as DBusString).value;
+  }
+
+  /// Gets an alternative hostname for [name].
+  Future<String> getAlternativeHostName(String name) async {
+    var result = await _root.callMethod('org.freedesktop.Avahi.Server2',
+        'GetAlternativeHostName', [DBusString(name)]);
+    if (result.signature != DBusSignature('s')) {
+      throw 'org.freedesktop.Avahi.Server2.GetAlternativeHostName returned invalid result: ${result.returnValues}';
+    }
+    return (result.returnValues[0] as DBusString).value;
+  }
+
+  /// Gets an alternative service name for [name].
+  Future<String> getAlternativeServiceName(String name) async {
+    var result = await _root.callMethod('org.freedesktop.Avahi.Server2',
+        'GetAlternativeServiceName', [DBusString(name)]);
+    if (result.signature != DBusSignature('s')) {
+      throw 'org.freedesktop.Avahi.Server2.GetAlternativeServiceName returned invalid result: ${result.returnValues}';
+    }
+    return (result.returnValues[0] as DBusString).value;
   }
 
   /// Terminates the connection to the Avahi daemon. If a client remains unclosed, the Dart process may not terminate.
