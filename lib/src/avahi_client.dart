@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:dbus/dbus.dart';
 
+/// D-Bus interface names.
+const _serverInterfaceName = 'org.freedesktop.Avahi.Server2';
+
 /// A client that connects to Avahi.
 class AvahiClient {
   /// The bus this client is connected to.
@@ -24,30 +27,30 @@ class AvahiClient {
 
   /// Gets the server version.
   Future<String> getVersionString() async {
-    var result = await _root
-        .callMethod('org.freedesktop.Avahi.Server2', 'GetVersionString', []);
+    var result =
+        await _root.callMethod(_serverInterfaceName, 'GetVersionString', []);
     if (result.signature != DBusSignature('s')) {
-      throw 'org.freedesktop.Avahi.Server2.GetVersionString returned invalid result: ${result.returnValues}';
+      throw '$_serverInterfaceName.GetVersionString returned invalid result: ${result.returnValues}';
     }
     return (result.returnValues[0] as DBusString).value;
   }
 
   /// Gets the API version.
   Future<int> getAPIVersion() async {
-    var result = await _root
-        .callMethod('org.freedesktop.Avahi.Server2', 'GetAPIVersion', []);
+    var result =
+        await _root.callMethod(_serverInterfaceName, 'GetAPIVersion', []);
     if (result.signature != DBusSignature('u')) {
-      throw 'org.freedesktop.Avahi.Server2.GetAPIVersion returned invalid result: ${result.returnValues}';
+      throw '$_serverInterfaceName.GetAPIVersion returned invalid result: ${result.returnValues}';
     }
     return (result.returnValues[0] as DBusUint32).value;
   }
 
   /// Gets the hostname.
   Future<String> getHostName() async {
-    var result = await _root
-        .callMethod('org.freedesktop.Avahi.Server2', 'GetHostName', []);
+    var result =
+        await _root.callMethod(_serverInterfaceName, 'GetHostName', []);
     if (result.signature != DBusSignature('s')) {
-      throw 'org.freedesktop.Avahi.Server2.GetHostName returned invalid result: ${result.returnValues}';
+      throw '$_serverInterfaceName.GetHostName returned invalid result: ${result.returnValues}';
     }
     return (result.returnValues[0] as DBusString).value;
   }
@@ -55,68 +58,68 @@ class AvahiClient {
   /// Sets the hostname.
   Future<void> setHostName(String hostName) async {
     var result = await _root.callMethod(
-        'org.freedesktop.Avahi.Server2', 'SetHostName', [DBusString(hostName)]);
+        _serverInterfaceName, 'SetHostName', [DBusString(hostName)]);
     if (result.signature != DBusSignature('')) {
-      throw 'org.freedesktop.Avahi.Server2.SetHostName returned invalid result: ${result.returnValues}';
+      throw '$_serverInterfaceName.SetHostName returned invalid result: ${result.returnValues}';
     }
   }
 
   /// Gets the domain name.
   Future<String> getDomainName() async {
-    var result = await _root
-        .callMethod('org.freedesktop.Avahi.Server2', 'GetDomainName', []);
+    var result =
+        await _root.callMethod(_serverInterfaceName, 'GetDomainName', []);
     if (result.signature != DBusSignature('s')) {
-      throw 'org.freedesktop.Avahi.Server2.GetDomainName returned invalid result: ${result.returnValues}';
+      throw '$_serverInterfaceName.GetDomainName returned invalid result: ${result.returnValues}';
     }
     return (result.returnValues[0] as DBusString).value;
   }
 
   /// Gets the hostname in fully qualified domain name form.
   Future<String> getHostNameFqdn() async {
-    var result = await _root
-        .callMethod('org.freedesktop.Avahi.Server2', 'GetHostNameFqdn', []);
+    var result =
+        await _root.callMethod(_serverInterfaceName, 'GetHostNameFqdn', []);
     if (result.signature != DBusSignature('s')) {
-      throw 'org.freedesktop.Avahi.Server2.GetHostNameFqdn returned invalid result: ${result.returnValues}';
+      throw '$_serverInterfaceName.GetHostNameFqdn returned invalid result: ${result.returnValues}';
     }
     return (result.returnValues[0] as DBusString).value;
   }
 
   /// Gets an alternative hostname for [name].
   Future<String> getAlternativeHostName(String name) async {
-    var result = await _root.callMethod('org.freedesktop.Avahi.Server2',
-        'GetAlternativeHostName', [DBusString(name)]);
+    var result = await _root.callMethod(
+        _serverInterfaceName, 'GetAlternativeHostName', [DBusString(name)]);
     if (result.signature != DBusSignature('s')) {
-      throw 'org.freedesktop.Avahi.Server2.GetAlternativeHostName returned invalid result: ${result.returnValues}';
+      throw '$_serverInterfaceName.GetAlternativeHostName returned invalid result: ${result.returnValues}';
     }
     return (result.returnValues[0] as DBusString).value;
   }
 
   /// Gets an alternative service name for [name].
   Future<String> getAlternativeServiceName(String name) async {
-    var result = await _root.callMethod('org.freedesktop.Avahi.Server2',
-        'GetAlternativeServiceName', [DBusString(name)]);
+    var result = await _root.callMethod(
+        _serverInterfaceName, 'GetAlternativeServiceName', [DBusString(name)]);
     if (result.signature != DBusSignature('s')) {
-      throw 'org.freedesktop.Avahi.Server2.GetAlternativeServiceName returned invalid result: ${result.returnValues}';
+      throw '$_serverInterfaceName.GetAlternativeServiceName returned invalid result: ${result.returnValues}';
     }
     return (result.returnValues[0] as DBusString).value;
   }
 
   /// Gets the index of the network interface with [name].
   Future<int> getNetworkInterfaceIndexByName(String name) async {
-    var result = await _root.callMethod('org.freedesktop.Avahi.Server2',
+    var result = await _root.callMethod(_serverInterfaceName,
         'GetNetworkInterfaceIndexByName', [DBusString(name)]);
     if (result.signature != DBusSignature('i')) {
-      throw 'org.freedesktop.Avahi.Server2.GetNetworkInterfaceIndexByName returned invalid result: ${result.returnValues}';
+      throw '$_serverInterfaceName.GetNetworkInterfaceIndexByName returned invalid result: ${result.returnValues}';
     }
     return (result.returnValues[0] as DBusInt32).value;
   }
 
   /// Gets the name of the network interface with [index].
   Future<String> getNetworkInterfaceNameByIndex(int index) async {
-    var result = await _root.callMethod('org.freedesktop.Avahi.Server2',
+    var result = await _root.callMethod(_serverInterfaceName,
         'GetNetworkInterfaceNameByIndex', [DBusInt32(index)]);
     if (result.signature != DBusSignature('s')) {
-      throw 'org.freedesktop.Avahi.Server2.GetNetworkInterfaceNameByIndex returned invalid result: ${result.returnValues}';
+      throw '$_serverInterfaceName.GetNetworkInterfaceNameByIndex returned invalid result: ${result.returnValues}';
     }
     return (result.returnValues[0] as DBusString).value;
   }
