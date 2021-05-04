@@ -30,6 +30,17 @@ class MockAvahiRoot extends DBusObject {
         return DBusMethodSuccessResponse([DBusString(server.hostName)]);
       case 'GetHostNameFqdn':
         return DBusMethodSuccessResponse([DBusString(server.hostNameFqdn)]);
+      case 'GetNetworkInterfaceIndexByName':
+        var name = (methodCall.values[0] as DBusString).value;
+        var index = server.networkInterfaces.indexOf(name);
+        if (index < 0) {
+          return DBusMethodErrorResponse('org.freedesktop.Avahi.OSError');
+        }
+        return DBusMethodSuccessResponse([DBusInt32(index + 1)]);
+      case 'GetNetworkInterfaceNameByIndex':
+        var index = (methodCall.values[0] as DBusInt32).value;
+        var name = server.networkInterfaces[index - 1];
+        return DBusMethodSuccessResponse([DBusString(name)]);
       case 'GetVersionString':
         return DBusMethodSuccessResponse([DBusString(server.versionString)]);
       case 'SetHostName':
@@ -48,6 +59,7 @@ class MockAvahiServer extends DBusClient {
   String domainName;
   String hostName;
   String hostNameFqdn;
+  List<String> networkInterfaces;
   final String versionString;
 
   MockAvahiServer(DBusAddress clientAddress,
@@ -55,6 +67,7 @@ class MockAvahiServer extends DBusClient {
       this.domainName = '',
       this.hostName = '',
       this.hostNameFqdn = '',
+      this.networkInterfaces = const [],
       this.versionString = ''})
       : super(clientAddress);
 
@@ -191,6 +204,40 @@ void main() {
     await client.connect();
 
     expect(await client.getAlternativeServiceName('foo'), equals('foo #2'));
+
+    await client.close();
+  });
+
+  test('get network interface index by name', () async {
+    var server = DBusServer();
+    var clientAddress =
+        await server.listenAddress(DBusAddress.unix(dir: Directory.systemTemp));
+
+    var avahi = MockAvahiServer(clientAddress,
+        networkInterfaces: ['lo', 'eth0', 'eth1']);
+    await avahi.start();
+
+    var client = AvahiClient(bus: DBusClient(clientAddress));
+    await client.connect();
+
+    expect(await client.getNetworkInterfaceIndexByName('eth0'), equals(2));
+
+    await client.close();
+  });
+
+  test('get network interface name by index', () async {
+    var server = DBusServer();
+    var clientAddress =
+        await server.listenAddress(DBusAddress.unix(dir: Directory.systemTemp));
+
+    var avahi = MockAvahiServer(clientAddress,
+        networkInterfaces: ['lo', 'eth0', 'eth1']);
+    await avahi.start();
+
+    var client = AvahiClient(bus: DBusClient(clientAddress));
+    await client.connect();
+
+    expect(await client.getNetworkInterfaceNameByIndex(2), equals('eth0'));
 
     await client.close();
   });
