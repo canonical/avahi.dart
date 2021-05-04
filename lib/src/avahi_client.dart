@@ -101,6 +101,26 @@ class AvahiClient {
     return (result.returnValues[0] as DBusString).value;
   }
 
+  /// Gets the index of the network interface with [name].
+  Future<int> getNetworkInterfaceIndexByName(String name) async {
+    var result = await _root.callMethod('org.freedesktop.Avahi.Server2',
+        'GetNetworkInterfaceIndexByName', [DBusString(name)]);
+    if (result.signature != DBusSignature('i')) {
+      throw 'org.freedesktop.Avahi.Server2.GetNetworkInterfaceIndexByName returned invalid result: ${result.returnValues}';
+    }
+    return (result.returnValues[0] as DBusInt32).value;
+  }
+
+  /// Gets the name of the network interface with [index].
+  Future<String> getNetworkInterfaceNameByIndex(int index) async {
+    var result = await _root.callMethod('org.freedesktop.Avahi.Server2',
+        'GetNetworkInterfaceNameByIndex', [DBusInt32(index)]);
+    if (result.signature != DBusSignature('s')) {
+      throw 'org.freedesktop.Avahi.Server2.GetNetworkInterfaceNameByIndex returned invalid result: ${result.returnValues}';
+    }
+    return (result.returnValues[0] as DBusString).value;
+  }
+
   /// Terminates the connection to the Avahi daemon. If a client remains unclosed, the Dart process may not terminate.
   Future<void> close() async {
     if (_closeBus) {
