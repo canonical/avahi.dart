@@ -1,5 +1,5 @@
 name: avahi
-version: 0.0.0-dev.2
+version: 0.0.0-dev.3
 
 description:
   Provides a client to connect to Avahi - the service that implements mDNS/DNS-SD on Linux.
