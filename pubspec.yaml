@@ -10,7 +10,7 @@ environment:
   sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
-  dbus: ^0.4.3
+  dbus: ^0.6.8
 
 dev_dependencies:
   lints: ^1.0.1

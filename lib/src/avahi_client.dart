@@ -18,8 +18,8 @@ class AvahiClient {
   AvahiClient({DBusClient? bus})
       : _bus = bus ?? DBusClient.system(),
         _closeBus = bus == null {
-    _root =
-        DBusRemoteObject(_bus, 'org.freedesktop.Avahi', DBusObjectPath('/'));
+    _root = DBusRemoteObject(_bus,
+        name: 'org.freedesktop.Avahi', path: DBusObjectPath('/'));
   }
 
   /// Connects to the Avahi daemon.
